@@ -1,0 +1,16 @@
+Zadanie nr 1:
+
+• Zgodnie z dobrymi praktykami i posiadaną wiedzą stwórz framework testowy do testów automatycznych GUI. Wykorzystaj Python, Pytest, Selenium oraz dowolne repozytorium kodu np. bitbucket lub github.
+
+Przygotuj testy GUI portalu testarena (http://testarena.pl/demo):
+I. Zalogować się do wersji demo
+II. Do dowolnego projektu dodać nowe zadanie i potwierdzić, że zostało dodane.
+III. Przeprowadzić test logowania przy użyciu błędnych danych.
+
+
+
+Masz aktualną wersję Chrome
+Wersja 96.0.4664.110 (Oficjalna wersja) (64-bitowa)
+
+
+ChromeDriver 96.0.4664.45

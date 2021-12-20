@@ -1,0 +1,2 @@
+Zadanie nr 2:
+Przygotuj dowolne przykłady (typu car/animal) do omówienia filarów OOP w Python

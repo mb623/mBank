@@ -1,6 +1,7 @@
 import pytest
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoSuchElementException
 import time
 
 
@@ -13,14 +14,13 @@ class TestMBank:
         """
         self.driver = webdriver.Chrome('.\drivers\chromedriver.exe')
         self.driver.maximize_window()
+        self.driver.implicitly_wait(2)
         self.driver.get('http://demo.testarena.pl/zaloguj')
-        self.driver.implicitly_wait(5)
         self.email_box = self.driver.find_element('id', 'email')
         self.password_box = self.driver.find_element('id', 'password')
         self.button = self.driver.find_element('id', 'login')
 
-    @pytest.mark.parametrize("_login, _password", 'expected',
-                             [('administrator@testarena.pl', 'sumXQQ72$L', 'Kokpit - TestArena Demo')])
+    @pytest.mark.parametrize(('_login', '_password', 'expected'), [('administrator@testarena.pl', 'sumXQQ72$L', 'Kokpit - TestArena Demo')])
     def test_login_correct(self, _login, _password, expected):
         """
         Test login on website with correct data
@@ -29,14 +29,15 @@ class TestMBank:
         :param expected: expected site title after login
         :return:
         """
+
         self.email_box.send_keys(_login)
         self.password_box.send_keys(_password)
+        self.check_recaptcha()
         self.button.click()
 
         assert self.driver.title == expected
 
-    @pytest.mark.parametrize("_login, _password", 'expected',
-                             [('administrator@testarena.pl', 'sumXQQ72$L', 'Kokpit - TestArena Demo')])
+    @pytest.mark.parametrize(('_login', '_password', 'expected'), [('administrator@testarena.pl', 'sumXQQ72$L', 'Kokpit - TestArena Demo')])
     def test_add_new_task(self, _login, _password, expected):
         """
         Test login on website, go to project and add new task.
@@ -47,6 +48,7 @@ class TestMBank:
         """
         self.email_box.send_keys(_login)
         self.password_box.send_keys(_password)
+        self.check_recaptcha()
         self.button.click()
         assert self.driver.title == expected
 
@@ -95,13 +97,14 @@ class TestMBank:
 
         assert self.task_add_confirm == 'Zadanie zostało dodane.'
 
-    @pytest.mark.parametrize("_login, _password", 'expected',
+    @pytest.mark.parametrize(('_login', '_password', 'expected'),
                              [('administrator@testarena.pl', 'sdasdawad', 'Kokpit - TestArena Demo'),
                               ('dsadasdasd', 'sumXQQ72$L', 'Kokpit - TestArena Demo'),
                               ('ddasdas', 'e1231', 'Kokpit - TestArena Demo')])
     def test_login_incorrect(self, _login, _password, expected):
         self.email_box.send_keys(_login)
         self.password_box.send_keys(_password)
+        self.check_recaptcha()
         self.button.click()
 
         assert self.driver.title != expected
@@ -111,5 +114,13 @@ class TestMBank:
         Teardown for test. Close webdriver.
         :return:
         """
+        self.driver.delete_all_cookies()
         self.driver.close()
         self.driver.quit()
+
+    def check_recaptcha(self):
+        try:
+            self.driver.find_element('xpath', '//*[@id="text-2"]/div/form/div[4]/span/div[1]/div/div/iframe').click()
+            time.sleep(2)
+        except NoSuchElementException:
+            pass
